@@ -1,16 +1,19 @@
-# Usa una imagen base con Maven y OpenJDK
-FROM maven:3.8.6-openjdk-17 AS build
+# Usa una imagen base con OpenJDK
+FROM openjdk:17-jdk-slim AS build
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia el contenido de tu proyecto al contenedor
+# Instala Maven en el contenedor
+RUN apt-get update && apt-get install -y maven
+
+# Copia el contenido del proyecto al contenedor
 COPY . .
 
-# Compila la aplicación
+# Compila la aplicación con Maven
 RUN mvn clean package
 
-# Usa una imagen base de OpenJDK para la ejecución
+# Usa una imagen base más ligera para la ejecución
 FROM openjdk:17-jdk-slim
 
 # Copia el archivo .jar desde la etapa de construcción
